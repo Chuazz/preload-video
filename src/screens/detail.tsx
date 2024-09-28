@@ -3,11 +3,11 @@ import {Text, View} from 'react-native';
 import {Post} from '../data/post/data';
 
 const DetailScreen = ({route}: NativeStackScreenProps<any>) => {
-  const {post} = route.params || ({} as {post: Post});
+  const {post} = (route.params || {}) as {post: Post};
 
   return (
     <View style={{flexGrow: 1, padding: 12}}>
-      <Text>{title}</Text>
+      <Text>{post.title}</Text>
     </View>
   );
 };
