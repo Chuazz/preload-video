@@ -5,12 +5,41 @@ import {
   FlatList,
   Text,
   Image,
+  ViewToken,
 } from 'react-native';
 import {Post, posts} from '../data/post/data';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {useRef} from 'react';
 
 const HomeScreen = ({navigation}: NativeStackScreenProps<any>) => {
   const {width} = useWindowDimensions();
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50,
+  });
+
+  const onViewableItemsChanged = useRef(
+    async ({viewableItems}: {viewableItems: Array<ViewToken>}) => {
+      if (viewableItems.length) {
+        const post = viewableItems?.[0]?.item as Post;
+        const currentIndex = viewableItems?.[0]?.index;
+
+        if (
+          currentIndex === null ||
+          currentIndex === undefined ||
+          currentIndex < 0
+        ) {
+          return;
+        }
+
+        if (!post) {
+          return;
+        }
+
+        console.log(post);
+      }
+    },
+  );
 
   const renderItem = ({item}: {item: Post}) => {
     return (
@@ -32,10 +61,6 @@ const HomeScreen = ({navigation}: NativeStackScreenProps<any>) => {
               {item.subtitle}
             </Text>
           </Text>
-
-          <Text style={{lineHeight: 20, paddingTop: 8, color: 'black'}}>
-            {item.description}
-          </Text>
         </View>
 
         <Image
@@ -54,6 +79,8 @@ const HomeScreen = ({navigation}: NativeStackScreenProps<any>) => {
     <FlatList
       data={posts}
       renderItem={renderItem}
+      onViewableItemsChanged={onViewableItemsChanged.current}
+      viewabilityConfig={viewabilityConfig.current}
       contentContainerStyle={{gap: 24, paddingVertical: 12, flexGrow: 1}}
     />
   );
