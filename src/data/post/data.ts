@@ -18,6 +18,7 @@ type Post = {
   subtitle: string;
   thumb: any;
   title: string;
+  preload?: string;
 };
 
 const posts: Post[] = [

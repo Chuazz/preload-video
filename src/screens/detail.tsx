@@ -1,12 +1,14 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {useMemo, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 import {ScrollView, Text, View} from 'react-native';
-import Video, {OnLoadData} from 'react-native-video';
+import Video, {OnLoadData, ReactVideoProps, VideoRef} from 'react-native-video';
 import {Post} from '../data/post/data';
 
 const DetailScreen = ({route}: NativeStackScreenProps<any>) => {
   const {post} = (route.params || {}) as {post: Post};
   const [meta, setMeta] = useState<OnLoadData>();
+  const [end, setEnd] = useState(false);
+  const ref = useRef<VideoRef>(null);
 
   const aspectRatio = useMemo(() => {
     if (meta?.naturalSize?.width && meta.naturalSize.height) {
@@ -39,16 +41,15 @@ const DetailScreen = ({route}: NativeStackScreenProps<any>) => {
       </View>
 
       <Video
-        poster={{
-          source: post.thumb,
-          style: {width: '100%', height: '100%'},
-          resizeMode: 'cover',
-        }}
-        source={{uri: post.source}}
+        ref={ref}
+        source={{uri: post.preload}}
         style={{
           width: '100%',
           height: aspectRatio ? undefined : 300,
           aspectRatio,
+        }}
+        onEnd={() => {
+          setEnd(true);
         }}
         resizeMode="cover"
         controls={true}
